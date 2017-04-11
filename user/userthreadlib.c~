@@ -1,0 +1,22 @@
+
+#include "types.h"
+#include "stat.h"
+#include "user.h"
+#include "param.h"
+#define PGSIZE (4096)
+int thread_create(void (*fn)(void*), void *arg)
+{
+  void * ustack;
+  stack = malloc(2*PGSIZE);
+  if((uint)ustack % PGSIZE)
+    ustack = ustack + (PGSIZE - (uint)ustack % PGSIZE);
+  return clone(fn, arg, ustack);
+}
+
+int thread_join()
+{
+  void * ustack;
+  int status = join(&ustack);
+  free(ustack);
+  return status;
+}
