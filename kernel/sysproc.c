@@ -76,8 +76,47 @@ sys_sleep(void)
   return 0;
 }
 
+int
+sys_park(void)
+{
+  int n;
+  uint ticks0;
+  
+  if(argint(0, &n) < 0)
+    return -1;
+  setpark(&tickslock);
+  ticks0 = ticks;
+  while(ticks - ticks0 < n){
+    if(proc->killed){
+      unpark(&tickslock);
+      return -1;
+    }
+    park(&ticks, &tickslock);
+  }
+  unpark(&tickslock);
+  return 0;
+
+}
+
+int
+sys_unpark(void)
+{
+// ADD TO ME
+
+}
+
+int
+sys_setpark(void)
+{
+// ADD TO MEEEE
+
+}
+
+
+
 // return how many clock tick interrupts have occurred
 // since boot.
+
 int
 sys_uptime(void)
 {

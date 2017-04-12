@@ -3,8 +3,7 @@
 #define CONDVAR_H
 
 struct condvar {
-	const char	*condvar_desc;
-	int		condvar_waiters;
+	/* fill this in! */
 };
 
 void cv_init(struct condvar* cv);

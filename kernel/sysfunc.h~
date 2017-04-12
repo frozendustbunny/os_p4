@@ -23,5 +23,9 @@ int sys_unlink(void);
 int sys_wait(void);
 int sys_write(void);
 int sys_uptime(void);
-
+int sys_clone(void);
+int sys_join(void);
+void park(void);
+int setpark(void);
+int unpark(int pid);
 #endif // _SYSFUNC_H_

@@ -456,6 +456,72 @@ sleep(void *chan, struct spinlock *lk)
   }
 }
 
+void
+park(void)
+{
+  if(proc == 0)
+    panic("park");
+
+  if(lk == 0)
+    panic("park without lk");
+
+  // Must acquire ptable.lock in order to
+  // change p->state and then call sched.
+  // Once we hold ptable.lock, we can be
+  // guaranteed that we won't miss any wakeup
+  // (wakeup runs with ptable.lock locked),
+  // so it's okay to release lk.
+  if(lk != &ptable.lock){  //DOC: sleeplock0
+    acquire(&ptable.lock);  //DOC: sleeplock1
+    release(lk);
+  }
+
+  // Go to sleep.
+  proc->chan = chan;
+  proc->state = PARKING;
+  sched();
+
+  // Tidy up.
+  proc->chan = 0;
+
+  // Reacquire original lock.
+  if(lk != &ptable.lock){  //DOC: sleeplock2
+    release(&ptable.lock);
+    acquire(lk);
+  }
+}
+
+int
+setpark(void)
+{
+// failure returns -1;
+// if (something bad happened)
+// 	return -1;
+
+// add some stuff to setpark()
+
+
+// Success
+return 0;
+}
+
+int
+unpark(int pid)
+{
+// failure returns -1;
+// if (something bad happened)
+// 	return -1;
+
+  acquire(&ptable.lock);
+  wakeup1(); // not pid?
+  release(&ptable.lock);
+
+// Success
+return 0;
+
+}
+
+
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
 static void

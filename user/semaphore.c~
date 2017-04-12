@@ -4,24 +4,6 @@
 
 void sem_init(struct semaphore* sem, int initval)
 {
-/* grabbed from linux kern
-void
-sema_init(struct sema *sema, int value, const char *description)
-{
-
-	KASSERT((value >= 0), ("%s(): negative value\n", __func__));
-
-	bzero(sema, sizeof(*sema));
-	mtx_init(&sema->sema_mtx, description, "sema backing lock",
-	    MTX_DEF | MTX_NOWITNESS | MTX_QUIET);
-	cv_init(&sema->sema_cv, description);
-	sema->sema_value = value;
-
-	CTR4(KTR_LOCK, "%s(%p, %d, \"%s\")", __func__, sema, value, description);
-}
-
-*/
-
 
 /* grabbed from solaris source code
 int
@@ -55,29 +37,6 @@ return (0);
 
 void sem_wait(struct semaphore* sem)
 {
-
-/*
-grabbed from linux kern
-void
-_sema_wait(struct sema *sema, const char *file, int line)
-{
-
-	mtx_lock(&sema->sema_mtx);
-	while (sema->sema_value == 0) {
-		sema->sema_waiters++;
-		cv_wait(&sema->sema_cv, &sema->sema_mtx);
-		sema->sema_waiters--;
-	}
-	sema->sema_value--;
-
-	CTR6(KTR_LOCK, "%s(%p) \"%s\" v = %d at %s:%d", __func__, sema,
-	    cv_wmesg(&sema->sema_cv), sema->sema_value, file, line);
-
-	mtx_unlock(&sema->sema_mtx);
-}
-
-
-*/
 /* grabbed from solaris source code 
 #pragma weak _sema_wait = sema_wait
 int
@@ -112,26 +71,6 @@ return (sema_wait_impl(sp, &tslocal));
 
 void sem_post(struct semaphore* sem)
 {
-
-/* grabbed from linux kern
-void
-_sema_post(struct sema *sema, const char *file, int line)
-{
-
-	mtx_lock(&sema->sema_mtx);
-	sema->sema_value++;
-	if (sema->sema_waiters && sema->sema_value > 0)
-		cv_signal(&sema->sema_cv);
-
-	CTR6(KTR_LOCK, "%s(%p) \"%s\" v = %d at %s:%d", __func__, sema,
-	    cv_wmesg(&sema->sema_cv), sema->sema_value, file, line);
-
-	mtx_unlock(&sema->sema_mtx);
-}
-
-*/
-
-
 /* grabbed from solaris source code
 #pragma weak _sema_post = sema_post
 int

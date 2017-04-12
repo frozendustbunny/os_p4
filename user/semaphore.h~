@@ -21,3 +21,13 @@ void sem_wait(struct semaphore* sem);
 #endif
 
 
+/* taken from solaris
+typedef struct {
+// this structure must be the same as sema_t in <synch.h> 
+uint32_t    sem_count;  /* semaphore count 
+uint16_t    sem_type;
+uint16_t    sem_magic;
+upad64_t    sem_pad1[3];    /* reserved for a mutex_t 
+upad64_t    sem_pad2[2];    /* reserved for a cond_t
+} sem_t;
+*/

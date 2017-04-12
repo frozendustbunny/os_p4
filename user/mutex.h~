@@ -3,8 +3,7 @@
 #define MUTEX_H
 
 struct mutex {
-	atomic_long_t	owner;
-	spinlock_t	wait_lock;
+	/* fill this in! */
 };
 
 muvoid mutex_init(struct mutex* mtx);
@@ -28,5 +27,3 @@ struct mutex {
 4 queue_t *q;
 5 } lock_t;
 */
-
-

@@ -4,12 +4,30 @@
 
 void cv_init(struct condvar* cv)
 {
-	/* fill this in! */
+/*
+int error;
+ 
+error = ___lwp_cond_wait(cv, mp, NULL, 0);
+if (mp->mutex_type & (PTHREAD_PRIO_INHERIT|PTHREAD_PRIO_PROTECT))
+(void) ___lwp_mutex_timedlock(mp, NULL, NULL);
+else
+(void) _lwp_mutex_lock(mp);
+return (error); 
+*/
 }
 
 void cv_wait(struct condvar* cv, struct mutex* mtx)
 {
-	/* fill this in! */
+/* grabbed from solaris source code
+int error;
+ 
+error = ___lwp_cond_wait(cv, mp, NULL, 0);
+if (mp->mutex_type & (PTHREAD_PRIO_INHERIT|PTHREAD_PRIO_PROTECT))
+(void) ___lwp_mutex_timedlock(mp, NULL, NULL);
+else
+(void) _lwp_mutex_lock(mp);
+return (error); 
+*/
 }
 
 void cv_signal(struct condvar* cv)

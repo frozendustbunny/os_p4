@@ -49,9 +49,9 @@ void free(void*);
 int atoi(const char*);
 int thread_create(void (*fn)(void*), void* arg);
 int thread_join(void);
-void spin_init(spinlock struct*);
-void spin_lock(spinlock struct*);
-void spin_unlock(spinlock struct*);
+void spin_init(spinlockstruct*);
+void spin_lock(spinlockstruct*);
+void spin_unlock(spinlockstruct*);
 
 #endif // _USER_H_
 

@@ -74,8 +74,9 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  int cloned;		       // Flag to indicate cloned process
+  int cloned;		       // Flag to indicate process is cloned
   void *ustack;		       // User Stack
+  int parked;		       // Flag to indicate process is parked
 };
 
 // Process memory is laid out contiguously, low addresses first:
