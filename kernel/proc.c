@@ -161,24 +161,43 @@ fork(void)
 
 int clone(void (*fn)(void*), void* arg, void* ustack)
 {
+  
+  
   int i, pid;
   struct proc *np;
 
   // Allocate process.
-  if((np = allocproc()) == 0)
+  if((np = allocproc()) == 0){
     return -1;
-
+}
   np->pgdir = proc->pgdir;
   np->sz = proc->sz;
   np->parent = proc;
+  np->sz = proc->sz;
+  np->parent = proc;// in twice?
   *np->tf = *proc->tf;
-  np->ustack = ustack;
+
   np->cloned = 1;
 
-  np->tf->esp = (int)ustack;
 
+
+  np->tf->esp = (int)ustack;
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
+
+  void * threadArg, *threadRet;
+  threadRet = ustack + 4096 -2 * sizeof(void *);
+  *(uint*)threadRet = 0xFFFFFFFF;
+
+  threadArg = ustack + 4096 - sizeof(void *);
+  *(uint*)threadArg = (uint)arg;
+  
+  np->tf->esp = (int)threadRet;
+  np->tf->ebp = (int)threadArg;
+  np->tf->eip = (int) fn;
+
+  np->ustack = ustack;
+
 
   for(i = 0; i < NOFILE; i++)
     if(proc->ofile[i])

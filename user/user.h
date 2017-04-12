@@ -1,6 +1,12 @@
 #ifndef _USER_H_
 #define _USER_H_
 
+
+
+typedef struct spinlock {
+  uint locked;
+}spinlockstruct;
+
 struct stat;
 
 // system calls
@@ -43,5 +49,9 @@ void free(void*);
 int atoi(const char*);
 int thread_create(void (*fn)(void*), void* arg);
 int thread_join(void);
+void spin_init(spinlockstruct*);
+void spin_lock(spinlockstruct*);
+void spin_unlock(spinlockstruct*);
+
 #endif // _USER_H_
 

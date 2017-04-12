@@ -1,0 +1,54 @@
+/* clone and verify that address space is shared */
+#include "types.h"
+#include "user.h"
+
+#undef NULL
+#define NULL ((void*)0)
+volatile int arg = 15;
+
+int ppid;
+#define PGSIZE (4096)
+
+volatile int global = 1;
+
+#define assert(x) if (x) {} else { \
+   printf(1, "%s: %d ", __FILE__, __LINE__); \
+   printf(1, "assert failed (%s)\n", # x); \
+   printf(1, "TEST FAILED\n"); \
+   kill(ppid); \
+   exit(); \
+}
+
+void worker(void *arg_ptr);
+
+int
+main(int argc, char *argv[])
+{
+   ppid = getpid();
+   printf(1, "ppid: %d\n", ppid);
+   void *ustack = malloc(4096);
+   assert(ustack != NULL);
+ //  if((uint)ustack % 4096)
+  //   ustack = ustack + (4096 - (uint)ustack % PGSIZE);
+
+   int clone_pid = clone(worker, (void*)&arg, ustack);
+   printf(1, "clone_pid: %d\n", clone_pid);
+   assert(clone_pid > 0);
+   printf(1, "global: %d\n", global);
+   while(global != 5)
+   {
+      ;
+   }
+   printf(1, "TEST PASSED\n");
+   exit();
+}
+
+void
+worker(void *arg_ptr) {
+   printf(1,"worker called");
+   assert(global == 1);
+   printf(1, "workerglobal: %d\n", global);
+   global = 5;
+   printf(1, "workerglobal: %d\n", global);
+   exit();
+}

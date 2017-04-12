@@ -17,7 +17,14 @@ USER_PROGS := \
 	usertests\
 	wc\
 	zombie\
-	thread_test
+	thread_test\
+	thread\
+	thread2\
+	badclone\
+	clone\
+	clone2\
+	clone3\
+	part2\
 
 USER_PROGS := $(addprefix user/, $(USER_PROGS))
 
@@ -27,7 +34,9 @@ USER_LIBS := \
 	usys.o\
 	printf.o\
 	umalloc.o\
-	userthreadlib.o
+	threads.o\
+	uspinlock.o\
+
 	
 
 USER_LIBS := $(addprefix user/, $(USER_LIBS))
