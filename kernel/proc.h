@@ -76,7 +76,10 @@ struct proc {
   char name[16];               // Process name (debugging)
   int cloned;		       // Flag to indicate process is cloned
   void *ustack;		       // User Stack
-  int parked;		       // Flag to indicate process is parked
+  int parked;		       // Flag to indicate park was callled
+  int setparked;	       // Flag to indicate setpark was called
+
+
 };
 
 // Process memory is laid out contiguously, low addresses first:

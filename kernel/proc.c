@@ -459,66 +459,70 @@ sleep(void *chan, struct spinlock *lk)
 void
 park(void)
 {
-  if(proc == 0)
-    panic("park");
-
-  if(lk == 0)
-    panic("park without lk");
-
-  // Must acquire ptable.lock in order to
-  // change p->state and then call sched.
-  // Once we hold ptable.lock, we can be
-  // guaranteed that we won't miss any wakeup
-  // (wakeup runs with ptable.lock locked),
-  // so it's okay to release lk.
-  if(lk != &ptable.lock){  //DOC: sleeplock0
-    acquire(&ptable.lock);  //DOC: sleeplock1
-    release(lk);
+  // check if set park was called
+	if(setpark == 0){
+		return -1;
   }
 
-  // Go to sleep.
-  proc->chan = chan;
-  proc->state = PARKING;
-  sched();
-
-  // Tidy up.
-  proc->chan = 0;
-
-  // Reacquire original lock.
-  if(lk != &ptable.lock){  //DOC: sleeplock2
-    release(&ptable.lock);
-    acquire(lk);
-  }
+  //if not, sleep
+  acquire(&ptable.lock);
+  proc->parked = 1;
+  release(&ptable.lock);
+  sleep(proc, &ptable.lock);
+	
 }
 
 int
 setpark(void)
 {
-// failure returns -1;
-// if (something bad happened)
-// 	return -1;
-
-// add some stuff to setpark()
-
-
-// Success
-return 0;
+    // check if set park was called
+	if(setpark != 0){
+		return -1;
+  }
+  acquire(&ptable.lock);
+  proc->setpark = 1;
+  release(&ptable.lock);
+  
+  //Success
+  return 0;
 }
 
 int
 unpark(int pid)
 {
-// failure returns -1;
-// if (something bad happened)
-// 	return -1;
+	// check if set park was called
+	if(setpark != 0){
+		return -1;
+	}
+	
+    struct proc *p;
+	int success;
+	success = -1;
+	acquire(&ptable.lock);
 
-  acquire(&ptable.lock);
-  wakeup1(); // not pid?
-  release(&ptable.lock);
+	//go through ptable look for proc with pid pid
+	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		if((p->pid == pid) {
 
-// Success
-return 0;
+			//check if setpark has been set
+  			if(p->parked == 1 && p->setpark == 1){
+   	
+   			 	//if found, check to see if it's asleep
+   			 	if(p->state == SLEEPING && p->chan == chan){
+					// wake it up   		 			
+					p->state = RUNNABLE;
+					// unpark it
+			    	p->parked = 0;
+						p->setparked = 0;
+					success = 0;
+				}
+   			}
+		}
+	}
+release(&ptable.lock);
 
+// Success = 0 if unpark successful	-1 if unsuccessful
+return success;
 }
 
 
